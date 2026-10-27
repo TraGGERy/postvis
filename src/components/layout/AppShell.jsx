@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useAuthUser } from "@/lib/use-auth-user";
 import { 
   FaYoutube, 
   FaInstagram, 
@@ -60,7 +60,7 @@ export const RailActiveIndicator = () => (
 export default function AppShell({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { session, status, signOut } = useAuthUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [connectedAccounts, setConnectedAccounts] = useState([]);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -226,7 +226,7 @@ export default function AppShell({ children }) {
             ) : (
               <button
                 type="button"
-                onClick={() => signIn("google")}
+                onClick={() => router.push("/login")}
                 className="w-9 h-9 rounded-full bg-zinc-100 dark:bg-[#252525] hover:bg-[#612bd3] text-zinc-700 dark:text-white hover:text-white border border-zinc-200 dark:border-transparent flex items-center justify-center transition-colors cursor-pointer"
                 title="Sign in with Google"
               >
@@ -439,7 +439,7 @@ export default function AppShell({ children }) {
                 type="button"
                 onClick={() => {
                   setProfileDropdownOpen(false);
-                  signOut({ callbackUrl: "/login" });
+                  signOut();
                 }}
                 className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors cursor-pointer text-left"
               >

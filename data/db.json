@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "id": "creator-main",
+      "name": "Social Creator",
+      "email": "creator@postvis.local",
+      "credits": 100,
+      "createdAt": "2026-10-27T00:00:00.000Z",
+      "updatedAt": "2026-10-27T00:00:00.000Z"
+    }
+  ],
+  "scheduledPosts": [],
+  "mediaAssets": [],
+  "postTags": [
+    {
+      "id": "tag-1",
+      "userId": "creator-main",
+      "name": "Growth",
+      "color": "#612bd3",
+      "createdAt": "2026-10-27T00:00:00.000Z",
+      "updatedAt": "2026-10-27T00:00:00.000Z"
+    },
+    {
+      "id": "tag-2",
+      "userId": "creator-main",
+      "name": "Promo",
+      "color": "#ec4899",
+      "createdAt": "2026-10-27T00:00:00.000Z",
+      "updatedAt": "2026-10-27T00:00:00.000Z"
+    }
+  ],
+  "accounts": [],
+  "sessions": [],
+  "creations": [],
+  "appInstances": []
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useSession, signIn } from "next-auth/react";
+import { useAuthUser } from "@/lib/use-auth-user";
 import Link from "next/link";
 import { 
   FaYoutube, 
@@ -306,7 +306,7 @@ const DEFAULT_WELCOME = `Hello! I am your AI Social Media Marketing Agent with p
 Select your target channels on the left and tell me what you'd like to plan!`;
 
 export default function AgentWorkspace() {
-  const { data: session, status } = useSession();
+  const { session, status } = useAuthUser();
 
   // Connected Accounts
   const [accounts, setAccounts] = useState([]);
@@ -626,10 +626,10 @@ export default function AgentWorkspace() {
             Authenticate to access your connected social accounts and AI assistant.
           </p>
           <button
-            onClick={() => signIn("google")}
+            onClick={() => window.location.href = "/login"}
             className="px-4 py-2 rounded-md bg-[#612bd3] hover:bg-[#7237e8] text-white text-xs font-semibold transition-colors cursor-pointer"
           >
-            Sign In with Google
+            Sign In with Clerk
           </button>
         </div>
       </div>

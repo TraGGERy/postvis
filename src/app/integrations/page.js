@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession, signIn } from "next-auth/react";
+import { useAuthUser } from "@/lib/use-auth-user";
 import { FaYoutube, FaInstagram, FaFacebook, FaLinkedin, FaPinterest } from "react-icons/fa";
 import { FaXTwitter, FaThreads } from "react-icons/fa6";
 import { SiTiktok } from "react-icons/si";
@@ -83,7 +83,7 @@ const PLATFORMS = [
 ];
 
 export default function IntegrationsPage() {
-  const { data: session } = useSession();
+  const { session } = useAuthUser();
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -168,7 +168,7 @@ export default function IntegrationsPage() {
 
   const handleConnect = (platform) => {
     if (!session) {
-      signIn("google");
+      window.location.href = "/login";
       return;
     }
     setAccountNameInput("");
@@ -381,7 +381,7 @@ export default function IntegrationsPage() {
               </div>
             </div>
             <button
-              onClick={() => signIn("google")}
+              onClick={() => window.location.href = "/login"}
               className="px-4 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] rounded-lg transition-colors cursor-pointer"
             >
               Sign In
