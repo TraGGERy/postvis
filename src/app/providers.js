@@ -3,9 +3,11 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
+import { isValidClerkPublishableKey } from "@/lib/clerk-config";
 
 export function Providers({ children }) {
   const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  const isKeyValid = isValidClerkPublishableKey(publishableKey);
 
   const innerContent = (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
@@ -21,8 +23,8 @@ export function Providers({ children }) {
     </ThemeProvider>
   );
 
-  // If Clerk Publishable Key is available, wrap with ClerkProvider
-  if (publishableKey) {
+  // Wrap with ClerkProvider ONLY when a valid format Clerk publishable key is supplied
+  if (isKeyValid) {
     return (
       <ClerkProvider publishableKey={publishableKey}>
         {innerContent}

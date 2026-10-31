@@ -1,23 +1,25 @@
 "use client";
 
-import { SignIn, useUser } from "@clerk/nextjs";
+import { SignIn } from "@clerk/nextjs";
 import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { FaInfoCircle } from "react-icons/fa";
+import { useAuthUser } from "@/lib/use-auth-user";
+import { isValidClerkPublishableKey } from "@/lib/clerk-config";
 
 function LoginContent() {
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn, isLoaded } = useAuthUser();
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("redirect_url") || searchParams.get("callbackUrl") || "/";
-  const hasClerk = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+  const hasClerk = isValidClerkPublishableKey(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
+    if (isLoaded && isSignedIn && hasClerk) {
       router.push(next);
     }
-  }, [isLoaded, isSignedIn, router, next]);
+  }, [isLoaded, isSignedIn, hasClerk, router, next]);
 
   return (
     <div className="min-h-dvh flex items-center justify-center bg-zinc-950 px-6 text-white select-none">

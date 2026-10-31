@@ -1,4 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { isValidClerkPublishableKey } from "@/lib/clerk-config";
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -7,16 +9,26 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/pricing(.*)",
   "/gallery(.*)",
+  "/media(.*)",
   "/api/stripe/webhook(.*)",
   "/api/webhook(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
-  // Only enforce Clerk authentication when keys are configured
-  if (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && !isPublicRoute(req)) {
+const clerkHandler = clerkMiddleware(async (auth, req) => {
+  if (!isPublicRoute(req)) {
     await auth.protect();
   }
 });
+
+export default function middleware(req, evt) {
+  const pubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  // If Clerk publishable key is not configured or invalid, allow pass-through
+  if (!isValidClerkPublishableKey(pubKey)) {
+    return NextResponse.next();
+  }
+
+  return clerkHandler(req, evt);
+}
 
 export const config = {
   matcher: [

@@ -1,14 +1,15 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "./prisma";
+import { isValidClerkPublishableKey, isValidClerkSecretKey } from "./clerk-config";
 
 /**
  * Get the currently authenticated user with Clerk,
  * synced automatically to our zero-cost JSON DB.
  */
 export async function getAuthenticatedUser() {
-  const hasClerk = Boolean(
-    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY
-  );
+  const hasClerk =
+    isValidClerkPublishableKey(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) &&
+    isValidClerkSecretKey(process.env.CLERK_SECRET_KEY);
 
   if (hasClerk) {
     try {

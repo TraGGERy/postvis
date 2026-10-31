@@ -7,13 +7,11 @@ function getDbPath() {
     return process.env.JSON_DB_PATH;
   }
   // If running in a read-only serverless environment (like Vercel production)
-  if (process.env.VERCEL) {
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === "production") {
     return path.join("/tmp", "postvis-db.json");
   }
-  return path.join(process.cwd(), "data", "db.json");
+  return path.join(/*turbopackIgnore: true*/ process.cwd(), "data", "db.json");
 }
-
-const DB_PATH = getDbPath();
 
 const initialDbStructure = {
   users: [
@@ -40,18 +38,19 @@ let memoryDb = null;
 function loadDb() {
   if (memoryDb) return memoryDb;
 
+  const dbPath = getDbPath();
   try {
-    const dir = path.dirname(DB_PATH);
+    const dir = path.dirname(dbPath);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
 
-    if (fs.existsSync(DB_PATH)) {
-      const data = fs.readFileSync(DB_PATH, "utf-8");
+    if (fs.existsSync(dbPath)) {
+      const data = fs.readFileSync(dbPath, "utf-8");
       memoryDb = JSON.parse(data);
     } else {
       memoryDb = { ...initialDbStructure };
-      fs.writeFileSync(DB_PATH, JSON.stringify(memoryDb, null, 2), "utf-8");
+      fs.writeFileSync(dbPath, JSON.stringify(memoryDb, null, 2), "utf-8");
     }
   } catch (err) {
     console.warn("[JSON_DB] Disk write/read issue, using in-memory state:", err.message);
@@ -70,12 +69,13 @@ function loadDb() {
 
 function saveDb() {
   if (!memoryDb) return;
+  const dbPath = getDbPath();
   try {
-    const dir = path.dirname(DB_PATH);
+    const dir = path.dirname(dbPath);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    fs.writeFileSync(DB_PATH, JSON.stringify(memoryDb, null, 2), "utf-8");
+    fs.writeFileSync(dbPath, JSON.stringify(memoryDb, null, 2), "utf-8");
   } catch (err) {
     console.warn("[JSON_DB] Failed to persist to disk:", err.message);
   }
