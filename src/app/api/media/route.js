@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
+import { getServerSession, authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { MediaStore } from "@/lib/media-store";
 
 export async function GET(req) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -121,7 +121,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }

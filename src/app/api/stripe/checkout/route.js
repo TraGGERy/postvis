@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
+import { getServerSession, authOptions } from "@/lib/auth";
 import { BillingService } from "@/lib/services/billing";
 
 export async function POST(req) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
 
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });

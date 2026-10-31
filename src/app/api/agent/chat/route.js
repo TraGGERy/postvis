@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
+import { getServerSession, authOptions } from "@/lib/auth";
 import config from "@/lib/config";
 
 const PLATFORM_NAMES = {
@@ -15,7 +15,7 @@ const PLATFORM_NAMES = {
 
 export async function POST(req) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized. Please sign in." }, { status: 401 });
     }

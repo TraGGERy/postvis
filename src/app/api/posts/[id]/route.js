@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
+import { getServerSession, authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { DemoStore } from "@/lib/demo-store";
 
 // DELETE: Delete or Cancel a post
 export async function DELETE(req, { params }) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -41,7 +41,7 @@ export async function DELETE(req, { params }) {
 // PATCH: Reschedule or Retry a post
 export async function PATCH(req, { params }) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
+import { getServerSession, authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export const DEFAULT_TAGS = [
@@ -15,7 +15,7 @@ let inMemoryTags = [];
 
 export async function GET(req) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     if (!session?.user) {
       return NextResponse.json(DEFAULT_TAGS);
     }
@@ -68,7 +68,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }

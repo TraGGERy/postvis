@@ -71,7 +71,7 @@ export async function getAuthenticatedUser() {
 /**
  * Compatible helper for existing routes expecting getServerSession()
  */
-export async function getServerSession() {
+export async function getServerSession(_options) {
   const user = await getAuthenticatedUser();
   if (!user) return null;
   return { user };

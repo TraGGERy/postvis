@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
+import { getServerSession, authOptions } from "@/lib/auth";
 import config from "@/lib/config";
 import { SocialAccountStore, PLATFORMS_CONFIG } from "@/lib/integrations/social-manager";
 
@@ -18,7 +18,7 @@ const PLATFORM_ID_MAP = {
 
 export async function GET(req) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
