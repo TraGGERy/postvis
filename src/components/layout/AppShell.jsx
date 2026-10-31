@@ -228,7 +228,7 @@ export default function AppShell({ children }) {
                 type="button"
                 onClick={() => router.push("/login")}
                 className="w-9 h-9 rounded-full bg-zinc-100 dark:bg-[#252525] hover:bg-[#612bd3] text-zinc-700 dark:text-white hover:text-white border border-zinc-200 dark:border-transparent flex items-center justify-center transition-colors cursor-pointer"
-                title="Sign in with Google"
+                title="Sign in with Clerk"
               >
                 <FaGoogle className="text-xs" />
               </button>
