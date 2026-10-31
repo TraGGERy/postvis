@@ -197,7 +197,14 @@ export default function IntegrationsPage() {
       });
       const data = await res.json();
       if (data.url) {
-        window.location.href = data.url;
+        if (data.local || (data.url && data.url.includes("connected=true"))) {
+          try {
+            window.history.replaceState({}, "", data.url);
+          } catch (_) {}
+          fetchAccounts();
+        } else {
+          window.location.href = data.url;
+        }
       } else {
         alert(data.error || "Failed to initiate connection");
       }

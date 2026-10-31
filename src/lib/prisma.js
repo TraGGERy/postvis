@@ -1,4 +1,4 @@
-import { jsonDb } from "./json-db";
+import { jsonDb } from "./json-db.js";
 
 /**
  * Universal Database Client:

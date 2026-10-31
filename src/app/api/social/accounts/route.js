@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession, authOptions } from "@/lib/auth";
 import config from "@/lib/config";
 import { SocialAccountStore, PLATFORMS_CONFIG } from "@/lib/integrations/social-manager";
+import { prisma } from "@/lib/prisma";
 
 const PLATFORM_ID_MAP = {
   youtube: 1,
@@ -92,11 +93,39 @@ export async function GET(req) {
       }
     }
 
-    // 3. If no remote accounts found, provide the local SocialAccountStore accounts
-    if (accounts.length === 0) {
-      const fallback = SocialAccountStore.getAll();
-      return NextResponse.json(fallback);
+    // 3. Merge persisted accounts from zero-cost JSON DB
+    try {
+      const dbAccounts = await prisma.account.findMany({
+        where: { userId: session.user.id }
+      });
+      if (Array.isArray(dbAccounts)) {
+        dbAccounts.forEach(acc => {
+          const id = acc.providerAccountId || acc.id;
+          if (!seenIds.has(id)) {
+            seenIds.add(id);
+            accounts.push({
+              id: isNaN(Number(id)) ? id : Number(id),
+              platform: acc.platform || 1,
+              platform_name: acc.platform_name || acc.provider || "youtube",
+              account_name: acc.account_name || "Connected Channel",
+              platform_user_id: acc.providerAccountId || acc.id,
+              connected_at: acc.connected_at || acc.createdAt,
+            });
+          }
+        });
+      }
+    } catch (dbErr) {
+      console.warn("[ACCOUNTS_DB_WARN] Could not read from prisma.account:", dbErr.message);
     }
+
+    // 4. Merge local SocialAccountStore accounts
+    const localAccounts = SocialAccountStore.getAll();
+    localAccounts.forEach(acc => {
+      if (!seenIds.has(acc.id)) {
+        seenIds.add(acc.id);
+        accounts.push(acc);
+      }
+    });
 
     return NextResponse.json(accounts);
   } catch (error) {
